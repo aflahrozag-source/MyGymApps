@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Routine Gym</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header & Profile -->
+        <header class="header">
+            <div class="header-top">
+                <h1>MY ROUTINE <span>GYM</span></h1>
+                <div class="header-actions">
+                    <button id="btn-open-profile" class="btn-icon-profile" title="Profil Pengguna">
+                        <img id="header-avatar" src="https://via.placeholder.com/40" alt="Avatar">
+                    </button>
+                    <button id="theme-toggle" class="btn-theme-toggle" title="Ubah Tema">🌙</button>
+                </div>
+            </div>
+            <div class="realtime-clock">
+                <span id="realtime-date">Loading...</span> | <span id="realtime-time">00:00:00 WIB</span>
+            </div>
+        </header>
+
+        <!-- Navigation Bar (Tab Menu) -->
+        <nav class="main-navbar">
+            <button class="nav-tab active" data-tab="tab-workout">🏋️ Latihan</button>
+            <button class="nav-tab" data-tab="tab-calendar">📅 Kalender</button>
+            <button class="nav-tab" data-tab="tab-stats">📊 Statistik</button>
+        </nav>
+
+        <!-- TAB 1: WORKOUT / LATIHAN -->
+        <section id="tab-workout" class="tab-content active">
+            <!-- Banner Pengingat Harian -->
+            <div class="reminder-banner" id="reminder-banner">
+                📌 <strong>Pengingat Harian:</strong> <span id="reminder-text">Loading...</span>
+            </div>
+
+            <!-- Tombol Mode Fokus Layar Penuh -->
+            <button id="btn-focus-mode" class="btn-focus-trigger">
+                ⚡ Aktifkan Mode Fokus Latihan
+            </button>
+
+            <!-- Navigasi Split Workout -->
+            <nav class="day-selector">
+                <button class="day-btn active" data-day="push">Push Day</button>
+                <button class="day-btn" data-day="pull">Pull Day</button>
+                <button class="day-btn" data-day="leg">Leg Day</button>
+            </nav>
+
+            <!-- Progress Bar Harian -->
+            <section class="progress-section">
+                <div class="progress-info">
+                    <span id="day-title">PUSH DAY PROGRESS</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+            </section>
+
+            <!-- Daftar Menu Latihan -->
+            <main class="workout-container" id="workout-list"></main>
+
+            <!-- Form Input Tambah Latihan -->
+            <section class="add-workout-wrapper">
+                <button id="btn-toggle-add-form" class="btn-toggle-add">➕ Tambah Menu Latihan Baru</button>
+                <div id="add-workout-card" class="add-workout-card hidden">
+                    <h3>Tambah Latihan Kustom</h3>
+                    <form id="add-workout-form" class="workout-form">
+                        <input type="text" id="input-name" placeholder="Nama Gerakan" required>
+                        <div class="form-row">
+                            <input type="number" id="input-sets" placeholder="Jumlah Target Set" min="1" value="4" required>
+                            <input type="text" id="input-reps" placeholder="Target Reps" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="number" id="input-rest-sec" placeholder="Rest (Detik)" min="5" value="60" required>
+                            <button type="submit" class="btn-add">Simpan Menu</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Riwayat Log Aktivitas -->
+            <section class="history-log-wrapper">
+                <button id="btn-toggle-history" class="btn-toggle-history">📜 Lihat Riwayat Catatan Latihan Harian</button>
+                <div id="history-log-card" class="history-log-card hidden">
+                    <h3>Catatan Progress Harian</h3>
+                    <div class="manual-log-box">
+                        <input type="text" id="input-daily-note" placeholder="Tulis catatan harian...">
+                        <button id="btn-save-daily-log" class="btn-add">Simpan Catatan</button>
+                    </div>
+                    <ul id="history-list" class="history-list">
+                        <li class="empty-log">Belum ada catatan aktivitas harian.</li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 2: KALENDER -->
+        <section id="tab-calendar" class="tab-content hidden">
+            <section class="calendar-card">
+                <div class="calendar-header">
+                    <button id="btn-prev-month" class="btn-cal-nav">&lt;</button>
+                    <h3 id="calendar-month-year">Oktober 2026</h3>
+                    <button id="btn-next-month" class="btn-cal-nav">&gt;</button>
+                </div>
+                <div class="calendar-days-header">
+                    <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                </div>
+                <div id="calendar-grid" class="calendar-grid"></div>
+                
+                <div class="rest-day-setting">
+                    <label>⚙️ <strong>Pengaturan Rest Day Mingguan:</strong></label>
+                    <div class="rest-days-checkboxes">
+                        <label><input type="checkbox" class="rest-day-check" value="0" checked> Min</label>
+                        <label><input type="checkbox" class="rest-day-check" value="1"> Sen</label>
+                        <label><input type="checkbox" class="rest-day-check" value="2"> Sel</label>
+                        <label><input type="checkbox" class="rest-day-check" value="3"> Rab</label>
+                        <label><input type="checkbox" class="rest-day-check" value="4"> Kam</label>
+                        <label><input type="checkbox" class="rest-day-check" value="5"> Jum</label>
+                        <label><input type="checkbox" class="rest-day-check" value="6"> Sab</label>
+                    </div>
+                </div>
+
+                <div class="calendar-recommendation" id="calendar-recommendation">
+                    <h4>💡 Detail & Catatan Tanggal:</h4>
+                    <p id="rec-text">Klik salah satu tanggal untuk melihat/menambah catatan.</p>
+                    <div id="calendar-note-box" class="calendar-note-box hidden">
+                        <input type="text" id="input-cal-note" placeholder="Tulis penanda/reminder jadwal...">
+                        <button id="btn-save-cal-note" class="btn-timer-sm">Simpan Catatan</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 3: STATISTIK & GRAFIK -->
+        <section id="tab-stats" class="tab-content hidden">
+            <section class="stats-card">
+                <h3>📈 Tren Konsistensi Latihan</h3>
+                <p class="stats-sub">Grafik persentase penyelesaian latihan 7 hari terakhir.</p>
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </section>
+        </section>
+    </div>
+
+    <!-- OVERLAY FULLSCREEN MODE FOKUS -->
+    <div id="focus-overlay" class="focus-overlay hidden">
+        <div class="focus-header">
+            <h2>⚡ MODE FOKUS LATIHAN</h2>
+            <button id="btn-close-focus" class="btn-close-focus">❌ Keluar</button>
+        </div>
+        <div id="focus-workout-container" class="focus-workout-container"></div>
+    </div>
+
+    <!-- Modal Profil Pengguna -->
+    <div class="modal-overlay hidden" id="profile-modal">
+        <div class="modal-content profile-modal-content">
+            <h3>👤 Profil Pengguna</h3>
+            <form id="profile-form">
+                <div class="avatar-upload-group">
+                    <img id="profile-preview" src="https://via.placeholder.com/100" alt="Foto Profil">
+                    <input type="file" id="input-avatar" accept="image/*">
+                </div>
+                <div class="form-group-profile">
+                    <label>Nama Lengkap:</label>
+                    <input type="text" id="profile-name" placeholder="Masukkan nama..." required>
+                </div>
+                <div class="form-group-profile">
+                    <label>Nomor HP:</label>
+                    <input type="tel" id="profile-phone" placeholder="08xxxxxxxxxx" required>
+                </div>
+                <div class="form-group-profile">
+                    <label>Alamat:</label>
+                    <textarea id="profile-address" rows="2" placeholder="Masukkan alamat..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-modal">Simpan Profil</button>
+                    <button type="button" id="btn-close-profile" class="btn-modal btn-close">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Apresiasi -->
+    <div class="modal-overlay hidden" id="congrats-modal">
+        <div class="modal-content">
+            <h2>🔥 LUAR BIASA! 🔥</h2>
+            <p>Selamat! Kamu telah menyelesaikan seluruh target latihan hari ini.</p>
+            <button id="btn-modal-reset" class="btn-modal">Mulai Ulang</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
